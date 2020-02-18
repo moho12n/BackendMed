@@ -10,7 +10,7 @@ var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'tp4'
+    database: 'promeddb'
 });
 connection.connect();
 
@@ -57,6 +57,15 @@ app.post('/addteam', function (req, res) {
     });
 })
 // server creation
+app.get('/', function (req, res) {
+    var query= "INSERT INTO medecin (full_name, commune, specialite, phone, localisation, heure_ouverture, heure_fermeture, agenda) VALUES ('ssss', 'ss', 'géni', '04244444', 'lien google', '08:00:00', '16:00:00', NULL)"
+  
+  connection.query(query,function(error,results) {
+    if (error)throw error;
+res.send(results);
+  })
+    
+});
 
 var server = app.listen(8082, function () {
     var host = server.address().address
