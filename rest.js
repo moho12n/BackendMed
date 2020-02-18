@@ -18,9 +18,13 @@ connection.connect();
 
 
 // rest service
-app.get('/', function (req, res) {
-    
-    res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' });
+app.get('/patient/insert/:nss/:nom/:prenom/:adresse/:phone/:password/', function (req, res) {
+    var query= "INSERT INTO patient(NSS, Nom, prenom, adresse, phone, password, newpassword) Values ('"+req.params.nss +"','"+req.params.nom +"','"+req.params.prenom +"','"+req.params.address +"','"+req.params.phone +"','"+req.params.password +"','false')" ;
+  
+  connection.query(query,function(error,results) {
+    if (error)throw error;
+res.send(results);
+  })
     
 });
 // server creation
