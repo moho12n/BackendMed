@@ -10,11 +10,7 @@ var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-<<<<<<< HEAD
     database: 'promeddb'
-=======
-    database: 'suivis_intervention_maintenance'
->>>>>>> 77f8092606b56fcfd7b50ff925b7da6bdd6487e0
 });
 connection.connect();
 
