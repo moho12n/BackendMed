@@ -27,16 +27,16 @@ res.send(results);
   })
     
 });
-// server creation
-app.get('/', function (req, res) {
-    var query= "INSERT INTO medecin (full_name, commune, specialite, phone, localisation, heure_ouverture, heure_fermeture, agenda) VALUES ('ssss', 'ss', 'géni', '04244444', 'lien google', '08:00:00', '16:00:00', NULL)"
-  
-  connection.query(query,function(error,results) {
-    if (error)throw error;
-res.send(results);
-  })
-    
+
+// API03: Get medecin traitant 
+app.get('/getMedTraitant/:nss', function (req, res) {
+    var query = "select * from demandeajout where statut = 'accepted' and patient = " + req.params.nss;
+    connection.query(query, function (error, results) {
+        if (error) throw error;
+        res.send(results);
+    });
 });
+//API04:
 
 var server = app.listen(8082, function () {
     var host = server.address().address
