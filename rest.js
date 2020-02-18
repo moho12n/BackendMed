@@ -36,7 +36,44 @@ app.get('/getMedTraitant/:nss', function (req, res) {
         res.send(results);
     });
 });
-//API04:
+//API04: Ajout medecin traitant
+
+//API05: Recherche Medecin par commune 
+// both
+app.get('/getMedecin/:commune/:specialite', function (req, res) {
+    var query = "select * from medecin where commune = '"+ req.params.commune +"' and specialite = '" + req.params.specialite+"'";
+    connection.query(query, function (error, results) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+// Commune uniquement
+app.get('/getMedecinCommune/:commune', function (req, res) {
+    var query = "select * from medecin where commune = '"+ req.params.commune +"'";
+    connection.query(query, function (error, results) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+// specialite uniquement
+app.get('/getMedecinSpecialite/:specialite', function (req, res) {
+    var query = "select * from medecin where specialite = '"+ req.params.specialite +"'";
+    connection.query(query, function (error, results) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+
+//*** API06: Get traitement */
+
+app.get('/getTraitement/:patient', function (req, res) {
+    var query = "select * from traitements where patient = '"+ req.params.patient +"'";
+    connection.query(query, function (error, results) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+//*** */
 
 var server = app.listen(8082, function () {
     var host = server.address().address
