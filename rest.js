@@ -18,6 +18,27 @@ connection.connect();
 
 
 // rest service
+
+app.get('/medecin/insert', function (req, res) {
+    var medecin = JSON.parse(JSON.stringify(req.body));
+    var query = "INSERT INTO medecin VALUES (?,?,?,?,?,?,?,?,?,?)";
+    connection.query(query,[medecin.full_name,medecin.commune,
+        medecin.specialite,medecin.phone,medecin.localisation,
+        medecin.heure_ouverture,medecin.heure_fermeture,null,
+        medecin.password,medecin.newpassword],function(error,results){
+        if (error) {
+            res.send("ERRORaa")
+        }
+        else {
+            res.send("SUCCES")
+        }
+
+    })
+
+
+})
+
+
 app.get('/patient/insert', function (req, res) {
     var patient = JSON.parse(JSON.stringify(req.body));
     var query = "INSERT INTO patient VALUES (?,?,?,?,?,?,?)";
