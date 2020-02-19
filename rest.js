@@ -100,8 +100,25 @@ app.get('/getTraitement/:patient', function (req, res) {
         res.send(results);
     });
 });
-//*** */
+//*** API07: GET RDV */
 
+app.get('/getRDV/:patient', function (req, res) {
+    var query = "select * from rdv where patient = '"+ req.params.patient +"'";
+    connection.query(query, function (error, results) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+//***API 08 : GET AGENDA */
+app.get('/getAgenda/:medecin', function (req, res) {
+    var query = "select * from agenda where medecin = '"+ req.params.medecin +"'";
+    connection.query(query, function (error, results) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+
+//******************* */
 var server = app.listen(8082, function () {
     var host = server.address().address
     var port = server.address().port
