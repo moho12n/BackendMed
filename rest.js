@@ -104,6 +104,22 @@ app.post('/patient/insert', function (req, res) {
 });
 
 
+app.post('/patient/update/:phone/:password', function (req, res) {
+    var query = "Update patient SET password='"+ req.params.password+"' ,newpassword='0' where phone ='"+req.params.phone+"'";
+
+  connection.query(query, function(error,results) {
+    if (error) {
+        res.send("ERROR")
+        console.log(error)
+    }
+    else {
+        res.send("SUCCES")
+    }
+
+  })
+    
+});
+
 // API03: Get medecin traitant 
 app.get('/getMedTraitant/:nss', function (req, res) {
     var query = "select * from demandeajout where statut = 'accepted' and patient = " + req.params.nss;
@@ -155,7 +171,7 @@ app.get('/getMedecin', function (req, res) {
         res.send(results);
     });
 });
-// Commune uniquement
+
 app.get('/getMedecinCommune/:commune', function (req, res) {
     console.log(req.params.commune);
     if(req.params.commune != null)
