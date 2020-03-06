@@ -48,7 +48,7 @@ app.get('/medecin/acceptpatient/:patient/:medecin', function (req, res) {
      "UPDATE demandeajout set statut='accepted' where patient='"+req.params.patient
      +"'"+" and medecin='"+req.params.medecin+"'";
 })
-
+/// DEmande Ajout 
 app.get('/patient/demandeajout', function (req, res) {
     var demandeajout = JSON.parse(JSON.stringify(req.body));
     var query = "INSERT INTO demandeajout VALUES (?,?,?,?,?)";
@@ -63,7 +63,17 @@ app.get('/patient/demandeajout', function (req, res) {
 
     })
 })
+/// vol 2
 
+
+app.get('/getDmandeAjout/:medecin/', function (req, res) {
+    var query = "select * from demandeajout where demandeajout.medecin = '" + req.params.medecin +"'";
+    connection.query(query, function (error, results) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+//---------------------------------------
 
 
 
@@ -88,8 +98,8 @@ app.post('/patient/insert', function (req, res) {
 
 
 // API03: Get medecin traitant 
-app.get('/getMedTraitant/:phone', function (req, res) {
-    var query = "select medecin.* from medecin inner join demandeajout ON demandeajout.medecin = medecin.phone where demandeajout.statut = 'accepted' and demandeajout.patient = '" + req.params.phone+"'";
+app.get('/getMedTraitant/:phone/:statut', function (req, res) {
+    var query = "select medecin.* from medecin inner join demandeajout ON demandeajout.medecin = medecin.phone where demandeajout.statut = '"+req.params.statut+"' and demandeajout.patient = '" + req.params.phone+"'";
     connection.query(query, function (error, results) {
         if (error) throw error;
         res.send(results);
