@@ -103,6 +103,7 @@ app.post('/patient/insert', function (req, res) {
     
 });
 
+
 // API03: Get medecin traitant 
 app.get('/getMedTraitant/:nss', function (req, res) {
     var query = "select * from demandeajout where statut = 'accepted' and patient = " + req.params.nss;
@@ -116,7 +117,39 @@ app.get('/getMedTraitant/:nss', function (req, res) {
 //API05: Recherche Medecin par commune 
 // both
 app.get('/getMedecin/:commune/:specialite', function (req, res) {
-    var query = "select * from medecin where commune = '"+ req.params.commune +"' and specialite = '" + req.params.specialite+"'";
+    var query = "select * from medecin where commune like '"+ req.params.commune +"%' and specialite like '" + req.params.specialite+"%'";
+    connection.query(query, function (error, results) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+// vol 2
+app.get('/getMedecin/:commune/', function (req, res) {
+    var query = "select * from medecin where commune like '" + req.params.commune +"%'";
+    connection.query(query, function (error, results) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+// vol 3
+app.get('/getMedecin//:specialite/', function (req, res) {
+    var query = "select * from medecin where specialite like '" + req.params.specialite +"%'";
+    connection.query(query, function (error, results) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+// vol 4 
+// tout
+app.get('/getMedecin//', function (req, res) {
+    var query = "select * from medecin ";
+    connection.query(query, function (error, results) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+app.get('/getMedecin', function (req, res) {
+    var query = "select * from medecin ";
     connection.query(query, function (error, results) {
         if (error) throw error;
         res.send(results);
@@ -124,7 +157,17 @@ app.get('/getMedecin/:commune/:specialite', function (req, res) {
 });
 // Commune uniquement
 app.get('/getMedecinCommune/:commune', function (req, res) {
-    var query = "select * from medecin where commune = '"+ req.params.commune +"'";
+    console.log(req.params.commune);
+    if(req.params.commune != null)
+    var query = "select * from medecin where commune like '"+ req.params.commune +"%'";
+    else var query = "select * from medecin";     
+    connection.query(query, function (error, results) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
+app.get('/getMedecinCommune/', function (req, res) {    
+    var query = "select * from medecin";     
     connection.query(query, function (error, results) {
         if (error) throw error;
         res.send(results);
@@ -132,13 +175,21 @@ app.get('/getMedecinCommune/:commune', function (req, res) {
 });
 // specialite uniquement
 app.get('/getMedecinSpecialite/:specialite', function (req, res) {
-    var query = "select * from medecin where specialite = '"+ req.params.specialite +"'";
+    
+    var query = "select * from medecin where specialite like'"+ req.params.specialite +"%'";
     connection.query(query, function (error, results) {
         if (error) throw error;
         res.send(results);
     });
 });
 
+app.get('/getMedecinSpecialite/', function (req, res) {
+    var query = "select * from medecin";     
+    connection.query(query, function (error, results) {
+        if (error) throw error;
+        res.send(results);
+    });
+});
 //*** API06: Get traitement */
 
 app.get('/getTraitement/:patient', function (req, res) {
