@@ -10,20 +10,78 @@ var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'promeddb'
+    database: 'projetmobile'
 });
 connection.connect();
 
 
+const accountSid = "ACc987331099df0758e8d187d84cae45de";
+const authToken = 'cea77ee626d343552419551dfd00024e';
+const client = require('twilio')(accountSid, authToken);
+
 
 
 // rest service
-app.get('/patient/insert/:nss/:nom/:prenom/:adresse/:phone/:password/', function (req, res) {
-    var query= "INSERT INTO patient(NSS, Nom, prenom, adresse, phone, password, newpassword) Values ('"+req.params.nss +"','"+req.params.nom +"','"+req.params.prenom +"','"+req.params.address +"','"+req.params.phone +"','"+req.params.password +"','false')" ;
-  
-  connection.query(query,function(error,results) {
-    if (error)throw error;
-res.send(results);
+
+app.get('/medecin/insert', function (req, res) {
+    var medecin = JSON.parse(JSON.stringify(req.body));
+    var query = "INSERT INTO medecin VALUES (?,?,?,?,?,?,?,?,?,?)";
+    connection.query(query,[medecin.full_name,medecin.commune,
+        medecin.specialite,medecin.phone,medecin.localisation,
+        medecin.heure_ouverture,medecin.heure_fermeture,null,
+        medecin.password,medecin.newpassword],function(error,results){
+        if (error) {
+            res.send("ERROR")
+        }
+        else {
+            res.send("SUCCES")
+        }
+
+    })
+
+
+})
+
+
+app.get('/medecin/acceptpatient/:patient/:medecin', function (req, res) {
+    var query =
+     "UPDATE demandeajout set statut='accepted' where patient='"+req.params.patient
+     +"'"+" and medecin='"+req.params.medecin+"'";
+})
+
+app.get('/patient/demandeajout', function (req, res) {
+    var demandeajout = JSON.parse(JSON.stringify(req.body));
+    var query = "INSERT INTO demandeajout VALUES (?,?,?,?,?)";
+    connection.query(query,[demandeajout.date,demandeajout.id,demandeajout.medecin,
+        demandeajout.patient,demandeajout.statut],function(error,results){
+        if (error) {
+            res.send("ERROR")
+        }
+        else {
+            res.send("SUCCES")
+        }
+
+    })
+})
+
+
+
+
+app.post('/patient/insert', function (req, res) {
+    var patient = JSON.parse(JSON.stringify(req.body));
+    var query = "INSERT INTO patient VALUES (?,?,?,?,?,?,?)";
+
+  connection.query(query, [patient.NSS, patient.Nom, patient.Prenom,patient.adresse,patient.phone,patient.password,patient.newpassword],function(error,results) {
+    if (error) {
+        res.send("ERROR")
+        console.log(error)
+    }
+    else {
+        res.send("SUCCES")
+        console.log("aa")
+
+    }
+
   })
     
 });
@@ -141,6 +199,27 @@ app.get('/getAgenda/:medecin', function (req, res) {
         res.send(results);
     });
 });
+
+app.post('/sendSMS',function(req,res){
+    var password= req.body.password;
+    var num = req.body.phone;
+    client.messages.create({
+        to: "+"+num,
+        from: '+12818154469',
+        body: "Votre mot de passe est = "+ password,
+      },function(err,message) {
+        if(err){
+          console.error(err.message);
+          //res.send("err");
+          res.send(JSON.stringify("err.message"));
+        }
+        else{
+          console.log(message.body);
+        //  res.send("success");
+          res.send(JSON.stringify("message.body)"));
+        }
+      });
+  });
 
 //******************* */
 var server = app.listen(8082, function () {
