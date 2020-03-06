@@ -48,6 +48,23 @@ app.get('/medecin/acceptpatient/:patient/:medecin', function (req, res) {
      "UPDATE demandeajout set statut='accepted' where patient='"+req.params.patient
      +"'"+" and medecin='"+req.params.medecin+"'";
 })
+//xxxxxx
+///xxx
+app.get('/login/:phone/:password', function (req, res) {
+    
+
+    var query = "Select * from patient where phone = '"+ req.params.phone +"' and password = '"+req.params.password+" '";
+ 
+    connection.query(query, function (error, results) {
+        console.log(req.params.phone,req.params.password)
+        if(results || results==null) res.send(results);
+        if (error) throw error;
+        
+        
+    });
+
+
+})
 
 app.get('/patient/demandeajout', function (req, res) {
     var demandeajout = JSON.parse(JSON.stringify(req.body));
