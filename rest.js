@@ -10,7 +10,7 @@ var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'projetmobile'
+    database: 'promeddb'
 });
 connection.connect();
 
@@ -88,13 +88,14 @@ app.post('/patient/insert', function (req, res) {
 
 
 // API03: Get medecin traitant 
-app.get('/getMedTraitant/:nss', function (req, res) {
-    var query = "select * from demandeajout where statut = 'accepted' and patient = " + req.params.nss;
+app.get('/getMedTraitant/:phone', function (req, res) {
+    var query = "select medecin.* from medecin inner join demandeajout ON demandeajout.medecin = medecin.phone where demandeajout.statut = 'accepted' and demandeajout.patient = '" + req.params.phone+"'";
     connection.query(query, function (error, results) {
         if (error) throw error;
         res.send(results);
     });
 });
+
 //API04: Ajout medecin traitant
 
 //API05: Recherche Medecin par commune 
