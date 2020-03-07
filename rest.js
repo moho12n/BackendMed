@@ -10,7 +10,7 @@ var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'projetmobile'
+    database: 'promeddb'
 });
 connection.connect();
 
@@ -43,11 +43,18 @@ app.get('/medecin/insert', function (req, res) {
 })
 
 
-app.get('/medecin/acceptpatient/:patient/:medecin', function (req, res) {
+app.post('/medecin/acceptpatient/:patient/:medecin', function (req, res) {
     var query =
      "UPDATE demandeajout set statut='accepted' where patient='"+req.params.patient
      +"'"+" and medecin='"+req.params.medecin+"'";
-})
+     connection.query(query,function(error,results){
+        if (error) {
+            res.send("ERROR")
+        }
+        else {
+            res.send("SUCCES")
+        }}
+        );});
 /// DEmande Ajout 
 app.get('/patient/demandeajout', function (req, res) {
     var demandeajout = JSON.parse(JSON.stringify(req.body));
@@ -61,8 +68,7 @@ app.get('/patient/demandeajout', function (req, res) {
             res.send("SUCCES")
         }}
     );});
-app.get('/login/:phone/:password', function (req, res) {
-    
+app.get('/login/:phone/:password', function (req, res) {    
 
     var query = "Select * from patient where phone = '"+ req.params.phone +"' and password = '"+req.params.password+" '";
  
@@ -79,8 +85,8 @@ app.get('/login/:phone/:password', function (req, res) {
 /// vol 2
 
 
-app.get('/getDmandeAjout/:medecin/', function (req, res) {
-    var query = "select * from demandeajout where demandeajout.medecin = '" + req.params.medecin +"'";
+app.get('/getDemandeAjout/:medecin', function (req, res) {
+    var query = "select * from demandeajout where statut = 'pending' and demandeajout.medecin = '" + req.params.medecin+"'";
     connection.query(query, function (error, results) {
         if (error) throw error;
         res.send(results);
@@ -134,8 +140,8 @@ app.post('/patient/update/:phone/:password', function (req, res) {
 
 // API03:  medecins traitants
 
-app.get('/getMedTraitant/:phone', function (req, res) {
-    var query = "select medecin.* from medecin inner join demandeajout ON demandeajout.medecin = medecin.phone where demandeajout.statut = 'accepted' and demandeajout.patient = '" + req.params.phone+"'";
+app.get('/getMedTraitant/:phone/:statut', function (req, res) {
+    var query = "select medecin.* from medecin inner join demandeajout ON demandeajout.medecin = medecin.phone where demandeajout.statut = '"+req.params.statut+"' and demandeajout.patient = '" + req.params.phone+"'";
 
     connection.query(query, function (error, results) {
         if (error) throw error;
