@@ -10,7 +10,7 @@ var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'promeddb'
+    database: 'projetmobile'
 });
 connection.connect();
 
@@ -59,10 +59,23 @@ app.get('/patient/demandeajout', function (req, res) {
         }
         else {
             res.send("SUCCES")
-        }
+        }}
+    );});
+app.get('/login/:phone/:password', function (req, res) {
+    
 
-    })
-})
+    var query = "Select * from patient where phone = '"+ req.params.phone +"' and password = '"+req.params.password+" '";
+ 
+    connection.query(query, function (error, results) {
+        console.log(req.params.phone,req.params.password)
+        if(results || results==null) res.send(results);
+        if (error) throw error;
+        
+        
+    });
+
+
+});
 /// vol 2
 
 
@@ -77,11 +90,15 @@ app.get('/getDmandeAjout/:medecin/', function (req, res) {
 
 
 
+
+
+
 app.post('/patient/insert', function (req, res) {
     var patient = JSON.parse(JSON.stringify(req.body));
     var query = "INSERT INTO patient VALUES (?,?,?,?,?,?,?)";
 
-  connection.query(query, [patient.NSS, patient.Nom, patient.Prenom,patient.adresse,patient.phone,patient.password,patient.newpassword],function(error,results) {
+  connection.query(query, [patient.NSS, patient.Nom, patient.Prenom,patient.adresse,patient.phone,patient.password,patient.newpassword],
+    function(error,results) {
     if (error) {
         res.send("ERROR")
         console.log(error)
@@ -97,16 +114,92 @@ app.post('/patient/insert', function (req, res) {
 });
 
 
-// API03: Get medecin traitant 
-app.get('/getMedTraitant/:phone/:statut', function (req, res) {
-    var query = "select medecin.* from medecin inner join demandeajout ON demandeajout.medecin = medecin.phone where demandeajout.statut = '"+req.params.statut+"' and demandeajout.patient = '" + req.params.phone+"'";
+
+
+app.post('/patient/update/:phone/:password', function (req, res) {
+    var query = "Update patient SET password='"+ req.params.password+"' ,newpassword='0' where phone ='"+req.params.phone+"'";
+
+  connection.query(query, function(error,results) {
+    if (error) {
+        res.send("ERROR")
+        console.log(error)
+    }
+    else {
+        res.send("SUCCES")
+    }
+
+  })
+    
+});
+
+// API03:  medecins traitants
+
+app.get('/getMedTraitant/:phone', function (req, res) {
+    var query = "select medecin.* from medecin inner join demandeajout ON demandeajout.medecin = medecin.phone where demandeajout.statut = 'accepted' and demandeajout.patient = '" + req.params.phone+"'";
+
     connection.query(query, function (error, results) {
         if (error) throw error;
         res.send(results);
+        
     });
 });
 
 //API04: Ajout medecin traitant
+app.post('/patient/demandetraitement',function(req,res){
+
+    var demandeajout = JSON.parse(JSON.stringify(req.body));
+
+var query = "insert into demandeajout values (?,?,?,?,?)"
+connection.query(query,[demandeajout.date,null,demandeajout.medecin,demandeajout.patient,demandeajout.statut],function(error,results) {
+    if (error) {
+        res.send("ERROR")
+        console.log(error)
+    }
+    else {
+        res.send("SUCCES")
+        console.log("aa")
+
+    }
+
+  })
+
+
+}
+
+);
+
+app.post('/medecin/accepterpatient/:patient/:medecin', function (req, res) {
+ 
+    var query = "Update demandeajout SET statut='accepted' where patient='"+req.params.patient+"' and medecin='"+req.params.medecin+"'"
+
+    connection.query(query,function(error,results) {
+        if (error) {
+            res.send("ERROR")
+            console.log(error)
+        }
+        else {
+            res.send("SUCCES")
+    
+        }
+    
+      })
+})
+app.post('/medecin/refuserpatient/:patient/:medecin', function (req, res) {
+ 
+    var query = "Update demandeajout SET statut='refused' where patient='"+req.params.patient+"' and medecin='"+req.params.medecin+"'"
+
+    connection.query(query,function(error,results) {
+        if (error) {
+            res.send("ERROR")
+            console.log(error)
+        }
+        else {
+            res.send("SUCCES")
+    
+        }
+    
+      })
+})
 
 //API05: Recherche Medecin par commune 
 // both
@@ -149,7 +242,7 @@ app.get('/getMedecin', function (req, res) {
         res.send(results);
     });
 });
-// Commune uniquement
+
 app.get('/getMedecinCommune/:commune', function (req, res) {
     console.log(req.params.commune);
     if(req.params.commune != null)
