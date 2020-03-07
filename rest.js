@@ -10,7 +10,7 @@ var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'promeddb'
+    database: 'projetmobile'
 });
 connection.connect();
 
